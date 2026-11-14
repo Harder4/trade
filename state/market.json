@@ -1,0 +1,65 @@
+{
+ "history": {
+  "EUR/USD": [
+   [
+    1794698804.4027398,
+    1.10222
+   ]
+  ],
+  "GBP/USD": [
+   [
+    1794698804.4027398,
+    1.32127
+   ]
+  ],
+  "USD/JPY": [
+   [
+    1794698804.4027398,
+    159.70626
+   ]
+  ],
+  "XAU/USD": [
+   [
+    1794698804.4027398,
+    3874.43424
+   ]
+  ]
+ },
+ "last_alert": {},
+ "feeds_seeded": [
+  "https://www.federalreserve.gov/feeds/press_monetary.xml",
+  "https://www.ecb.europa.eu/rss/press.xml"
+ ],
+ "feed_seen": [
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261112a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261013a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261007a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916b.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260825a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260819a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260714a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260709a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260708a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617b.htm",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260526a.htm",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261113~3883f1f187.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261110_1~9725b7aa07.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261110~9422461bad.en.html",
+  "https://www.ecb.europa.eu//press/inter/date/2026/html/ecb.in261107~e7b86fc4ce.en.html",
+  "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261106~356f2fc73a.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261105_1~5e97d9d5a0.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261105~6495a0df6f.en.html",
+  "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261104~caf181d7ac.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp.261102~70003226e9.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261030~08d9d540f0.en.html",
+  "https://www.ecb.europa.eu//press/govcdec/otherdec/2026/html/ecb.gc261030~e40f864093.en.html",
+  "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261030~e92c3c838c.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261029~e9b57c3495.en.html",
+  "https://www.ecb.europa.eu//press/press_conference/monetary-policy-statement/2026/html/ecb.is261029~5c5ffe99e5.en.html",
+  "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html"
+ ]
+}
