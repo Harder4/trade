@@ -240,6 +240,7 @@ def list_mode(args):
 
 # ---------- التشغيل الرئيسي ----------
 def main():
+    if sys.argv[1:] == ["--test"]: return send_telegram("✅ اختبار: البوت متصل بالقناة.")
     if len(sys.argv) > 2 and sys.argv[1] == "--list":
         return list_mode(sys.argv[2:])
     if len(sys.argv) == 2 and sys.argv[1] == "--list":
