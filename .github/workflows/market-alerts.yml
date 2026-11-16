@@ -5,8 +5,12 @@ on:
     - cron: "*/15 * * * *"
   workflow_dispatch:
     inputs:
+      test_telegram:
+        description: "اختر true لإرسال رسالة اختبار للتلغرام فوراً"
+        type: boolean
+        default: false
       args:
-        description: "للاستكشاف فقط، مثال: --list commodities oil (اتركه فارغاً للتشغيل العادي)"
+        description: "للاستكشاف فقط، مثال: --list commodities oil (اتركه فارغاً)"
         required: false
         default: ""
 
@@ -26,18 +30,31 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run
+          
+      # الخطوة الأولى: اختبار التلغرام (تعمل فقط إذا وضعت علامة صح)
+      - name: Test Telegram Connection
+        if: ${{ github.event.inputs.test_telegram == 'true' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python market_alerts.py --test
+
+      # الخطوة الثانية: التشغيل الطبيعي للمراقبة
+      - name: Run Market Alerts
+        if: ${{ github.event.inputs.test_telegram != 'true' }}
         env:
           TWELVE_DATA_API_KEY: ${{ secrets.TWELVE_DATA_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           ARGS: ${{ github.event.inputs.args }}
         run: python market_alerts.py $ARGS
+
+      # الخطوة الثالثة: حفظ البيانات الإجباري
       - name: Save state
         run: |
           git config user.name "alerts-bot"
           git config user.email "alerts-bot@users.noreply.github.com"
-          git add state/market.json || true
+          git add -f state/market.json || true
           if ! git diff --cached --quiet; then
             git commit -m "update state"
             git pull --rebase origin main
