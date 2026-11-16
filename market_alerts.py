@@ -148,13 +148,36 @@ def reference_point(history, t):
 
 
 def format_move(name, sym, price, ref_price, change, minutes):
-    arrow = "🔼" if change > 0 else "🔽"
+    # تحديد اتجاه التوصية بناءً على الزخم
+    is_up = change > 0
+    arrow = "🔼" if is_up else "🔽"
+    signal = "🟢 شراء (BUY)" if is_up else "🔴 بيع (SELL)"
+    
+    # حساب المسافة السعرية التي تحركها الأصل لضبط الأهداف ديناميكياً
+    dist = abs(price - ref_price)
+    
+    # معادلات إدارة المخاطر 
+    if is_up:
+        sl = price - (dist * 0.5)  # وقف الخسارة أسفل الدخول بنصف مسافة الزخم
+        tp1 = price + (dist * 0.5) # هدف أول (1:1)
+        tp2 = price + (dist * 1.0) # هدف ثاني (1:2)
+    else:
+        sl = price + (dist * 0.5)  # وقف الخسارة أعلى الدخول
+        tp1 = price - (dist * 0.5)
+        tp2 = price - (dist * 1.0)
+
     return "\n".join(
         [
-            f"⚡ <b>{html.escape(name)} ({html.escape(sym)})</b>",
-            f"حركة حادة {arrow} {change:+.2f}% خلال حوالي {minutes} دقيقة",
-            f"السعر الآن: {fmt_price(price)} (كان {fmt_price(ref_price)})",
-            "⚠️ معلومات تعليمية وليست نصيحة مالية.",
+            f"⚡️ <b>{html.escape(name)} ({html.escape(sym)})</b>",
+            f"نوع الإشارة: {signal} {arrow} ({change:+.2f}%)",
+            f"⏱ تشكلت خلال: {minutes} دقيقة",
+            "➖➖➖➖➖➖➖",
+            f"📍 الدخول: {fmt_price(price)}",
+            f"🎯 هدف 1: {fmt_price(tp1)}",
+            f"🎯 هدف 2: {fmt_price(tp2)}",
+            f"🛑 وقف الخسارة: {fmt_price(sl)}",
+            "➖➖➖➖➖➖➖",
+            "⚠️ هذه الإشارة مبنية على خوارزمية زخم آلية، يرجى إدارة مخاطرك."
         ]
     )
 
