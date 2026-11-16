@@ -28,6 +28,10 @@
    [
     1794813243.4557576,
     1.10158
+   ],
+   [
+    1794819976.5916593,
+    1.10291
    ]
   ],
   "GBP/USD": [
@@ -58,6 +62,10 @@
    [
     1794813243.4557576,
     1.3202
+   ],
+   [
+    1794819976.5916593,
+    1.32203
    ]
   ],
   "USD/JPY": [
@@ -88,6 +96,10 @@
    [
     1794813243.4557576,
     159.54509
+   ],
+   [
+    1794819976.5916593,
+    159.41211
    ]
   ],
   "XAU/USD": [
@@ -118,6 +130,10 @@
    [
     1794813243.4557576,
     3854.30719
+   ],
+   [
+    1794819976.5916593,
+    3861.89851
    ]
   ]
  },
@@ -159,6 +175,7 @@
   "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261030~e92c3c838c.en.html",
   "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261029~e9b57c3495.en.html",
   "https://www.ecb.europa.eu//press/press_conference/monetary-policy-statement/2026/html/ecb.is261029~5c5ffe99e5.en.html",
-  "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html"
+  "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html",
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261116~db374b56ab.en.html"
  ]
 }
