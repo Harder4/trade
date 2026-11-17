@@ -31,6 +31,10 @@ jobs:
         with:
           python-version: "3.12"
           
+      - name: Install dependencies and prepare files
+        run: |
+           pip install -r files/requirements.txt
+           cp files/market_alerts.py files/feeds.txt files/symbols.txt .
       # الخطوة الأولى: اختبار التلغرام (تعمل فقط إذا وضعت علامة صح)
       - name: Test Telegram Connection
         if: ${{ github.event.inputs.test_telegram == 'true' }}
