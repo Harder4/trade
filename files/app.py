@@ -3,12 +3,15 @@ TradingView -> Telegram webhook bot
 - يستقبل تنبيه JSON من TradingView على /webhook
 - يتحقق من السر والبيانات
 - يرسل بطاقة توصية منسقة لقناة تيليغرام
+- [جديد] يتابع كل صفقة ويرسل للقناة نتيجتها (ربح/خسارة + عدد النقاط) والحصيلة الكلية
 """
 import hmac
 import html
+import json
 import logging
 import os
 import threading
+import time
 
 import requests
 from flask import Flask, jsonify, request
@@ -20,6 +23,10 @@ log = logging.getLogger("webhook")
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "")  # كلمة سر تضعها داخل JSON في TradingView
+
+SIGNALS_FILE = "signals.json"
+EXPIRE_HOURS = 24
+_lock = threading.Lock()
 
 
 def fmt(x):
@@ -64,10 +71,10 @@ def build_message(s):
         f"{head} | <b>{html.escape(s['symbol'])}</b>",
         "━━━━━━━━━━━━━━",
         f"📍 الدخول: <code>{fmt(s['entry'])}</code>",
-        f"🎯 الهدف 1: <code>{fmt(s['tp1'])}</code>  (1:{s['rr1']:.1f})",
+        f"🎯 الهدف 1: <code>{fmt(s['tp1'])}</code> (1:{s['rr1']:.1f})",
     ]
     if s["tp2"]:
-        lines.append(f"🎯 الهدف 2: <code>{fmt(s['tp2'])}</code>  (1:{s['rr2']:.1f})")
+        lines.append(f"🎯 الهدف 2: <code>{fmt(s['tp2'])}</code> (1:{s['rr2']:.1f})")
     lines += [
         f"🛑 وقف الخسارة: <code>{fmt(s['sl'])}</code>",
         "━━━━━━━━━━━━━━",
@@ -87,14 +94,146 @@ def send_telegram(text):
         if not r.ok:
             log.error("Telegram error %s: %s", r.status_code, r.text)
         else:
-            log.info("Signal sent")
+            log.info("Message sent")
     except requests.RequestException as e:
         log.error("Telegram request failed: %s", e)
 
 
+# ───────────────────────── تتبع النتائج ─────────────────────────
+
+def yf_ticker(symbol):
+    """يحول اسم الرمز من TradingView إلى رمز yfinance. يرجع None إذا غير معروف."""
+    s = symbol.upper().split(":")[-1].replace("/", "").strip()
+    if s in ("XAUUSD", "GOLD"):
+        return "GC=F"
+    if len(s) == 6 and s.isalpha():
+        return f"{s}=X"
+    return None
+
+
+def unit(symbol):
+    """(مضاعف، اسم الوحدة): الذهب بالنقاط (دولار)، الفوركس بالبيبس."""
+    s = symbol.upper().split(":")[-1].replace("/", "")
+    if s in ("XAUUSD", "GOLD"):
+        return 1, "نقطة"
+    return (100 if s.endswith("JPY") else 10000), "بيب"
+
+
+def load_signals():
+    try:
+        with open(SIGNALS_FILE) as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+def save_signals(data):
+    with open(SIGNALS_FILE, "w") as f:
+        json.dump(data, f)
+
+
+def add_signal(s):
+    t = yf_ticker(s["symbol"])
+    if not t:
+        log.info("Not tracking unknown symbol %s", s["symbol"])
+        return
+    with _lock:
+        d = load_signals()
+        d.append(dict(symbol=s["symbol"], ticker=t, action=s["action"],
+                      entry=s["entry"], sl=s["sl"], tp1=s["tp1"],
+                      t=time.time(), status="open", pts=0.0))
+        save_signals(d)
+
+
+def stats_text():
+    closed = [x for x in load_signals() if x["status"] == "closed"]
+    wins = sum(1 for x in closed if x["pts"] > 0)
+    lines = ["📊 <b>الحصيلة الكلية</b>",
+             f"✅ رابحة: {wins}",
+             f"❌ خاسرة: {len(closed) - wins}"]
+    # مجموع النقاط لكل رمز على حدة (الذهب بالنقاط، الفوركس بالبيبس)
+    totals = {}
+    for x in closed:
+        totals.setdefault(x["symbol"], 0.0)
+        totals[x["symbol"]] += x["pts"]
+    for sym, tot in totals.items():
+        lines.append(f"📈 {html.escape(sym)}: {tot:+.1f} {unit(sym)[1]}")
+    return "\n".join(lines)
+
+
+def check_signals():
+    """يفحص الصفقات المفتوحة ويرسل نتيجة كل صفقة انتهت."""
+    import yfinance as yf  # استيراد متأخر كي لا يتعطل التطبيق إن لم يكن مثبتاً
+
+    with _lock:
+        d = load_signals()
+        open_ = [x for x in d if x["status"] == "open"]
+        if not open_:
+            return 0
+        msgs = []
+        cache = {}
+        for x in open_:
+            tk = x["ticker"]
+            if tk not in cache:
+                try:
+                    cache[tk] = yf.Ticker(tk).history(period="5d", interval="1m")
+                except Exception as e:
+                    log.error("yfinance failed for %s: %s", tk, e)
+                    cache[tk] = None
+            df = cache[tk]
+            if df is None or df.empty:
+                continue
+
+            sell = x["action"] == "SELL"
+            mult, uname = unit(x["symbol"])
+            mask = [i.timestamp() > x["t"] for i in df.index]
+            head = None
+            for _, r in df[mask].iterrows():
+                sl_hit = r["High"] >= x["sl"] if sell else r["Low"] <= x["sl"]
+                tp_hit = r["Low"] <= x["tp1"] if sell else r["High"] >= x["tp1"]
+                if sl_hit:  # إذا لمس الاثنين بنفس الشمعة نعتبرها خسارة (حذر)
+                    x["pts"] = -abs(x["sl"] - x["entry"]) * mult
+                    head = "❌ <b>خسرنا الصفقة</b>"
+                    break
+                if tp_hit:
+                    x["pts"] = abs(x["tp1"] - x["entry"]) * mult
+                    head = "✅ <b>ربحنا الصفقة</b>"
+                    break
+            else:
+                if time.time() - x["t"] < EXPIRE_HOURS * 3600:
+                    continue
+                last = float(df["Close"].iloc[-1])
+                x["pts"] = ((x["entry"] - last) if sell else (last - x["entry"])) * mult
+                head = f"⏱ <b>انتهت الصفقة ({EXPIRE_HOURS} ساعة)</b>"
+
+            x["status"] = "closed"
+            icon = "💰" if x["pts"] > 0 else "🔻"
+            side = "بيع" if sell else "شراء"
+            msgs.append(f"{head}\n{html.escape(x['symbol'])} | {side} | دخول {fmt(x['entry'])}\n"
+                        f"{icon} {x['pts']:+.1f} {uname}")
+        save_signals(d)
+
+    for m in msgs:
+        send_telegram(m + "\n\n" + stats_text())
+    return len(msgs)
+
+
+# ───────────────────────── المسارات ─────────────────────────
+
 @app.get("/")
 def health():
     return "ok", 200
+
+
+@app.get("/check")
+def check():
+    # رابط يستدعيه cron-job.org كل 5 دقائق
+    try:
+        n = check_signals()
+    except Exception as e:
+        log.exception("check failed")
+        return jsonify(error=str(e)), 500
+    return jsonify(closed=n), 200
 
 
 @app.post("/webhook")
@@ -115,6 +254,8 @@ def webhook():
     except (ValueError, KeyError, TypeError) as e:
         log.warning("Bad payload: %s | %s", e, data)
         return jsonify(error=str(e)), 400
+
+    add_signal(signal)  # [جديد] تسجيل الصفقة للمتابعة
 
     # TradingView يقطع الاتصال بعد ~3 ثوانٍ، فنرد فوراً ونرسل للتلغرام في الخلفية
     threading.Thread(target=send_telegram, args=(build_message(signal),), daemon=True).start()
