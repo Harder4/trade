@@ -1,18 +1,5 @@
 {
- "open_trades": [
-  {
-   "sym": "XAU/USD",
-   "name": "الذهب",
-   "opened": 1795173300.4025247,
-   "checked": 1795173300.4025247,
-   "tp1_hit": false,
-   "side": "BUY",
-   "entry": 3587.18657,
-   "sl": 3566.957355,
-   "tp1": 3607.4157849999997,
-   "tp2": 3627.6449999999995
-  }
- ],
+ "open_trades": [],
  "history": {
   "EUR/USD": [
    [
@@ -1271,12 +1258,5 @@
   "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261118a.htm",
   "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261120~e52bcc4db2.en.html"
  ],
- "results": [
-  [
-   "LOSS",
-   -1.0,
-   "XAU/USD",
-   1795173300
-  ]
- ]
+   "results": []
 }
