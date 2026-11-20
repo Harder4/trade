@@ -1,4 +1,5 @@
 {
+ "open_trades": [{"sym": "XAU/USD", "name": "الذهب", "side": "SELL", "entry": 3500, "sl": 3510, "tp1": 3490, "tp2": 3480, "opened": 1.0, "checked": 0, "tp1_hit": false}],
  "history": {
   "EUR/USD": [
    [
