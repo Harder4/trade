@@ -43,6 +43,7 @@ STATE = ROOT / "state" / "market.json"
 
 WINDOW_MIN = 60          # نقارن السعر الحالي بسعر قبل حوالي ساعة
 MIN_AGE_MIN = 30         # أقل عمر للمرجع حتى نسمح بالتنبيه
+MAX_REF_AGE_MIN = 120    # لا نرسل إشارة إذا المرجع أقدم من ساعتين
 COOLDOWN_MIN = 120       # لا نكرر تنبيه نفس الرمز قبل ساعتين
 HISTORY_KEEP_MIN = 26 * 60
 MAX_FEED_MSGS = 5        # حد أقصى لرسائل الأخبار في التشغيلة
@@ -441,7 +442,7 @@ def main():
         ref = reference_point(hist, t)
         hist.append([t, p])
         state["history"][sym] = [h for h in hist if h[0] >= t - HISTORY_KEEP_MIN * 60]
-        if ref is None or ref[1] == 0:
+        if ref is None or ref[1] == 0 or (t - ref[0]) > MAX_REF_AGE_MIN * 60:
             continue
         change = (p - ref[1]) / ref[1] * 100
         last = state["last_alert"].get(sym, 0)
