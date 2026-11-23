@@ -429,6 +429,10 @@
    [
     1795428047.8689382,
     1.09737
+   ],
+   [
+    1795428933.3040757,
+    1.09714
    ]
   ],
   "GBP/USD": [
@@ -859,6 +863,10 @@
    [
     1795428047.8689382,
     1.31172
+   ],
+   [
+    1795428933.3040757,
+    1.3113
    ]
   ],
   "USD/JPY": [
@@ -1289,6 +1297,10 @@
    [
     1795428047.8689382,
     159.12519
+   ],
+   [
+    1795428933.3040757,
+    159.15199
    ]
   ],
   "XAU/USD": [
@@ -1719,6 +1731,10 @@
    [
     1795428047.8689382,
     3614.93692
+   ],
+   [
+    1795428933.3040757,
+    3622.00732
    ]
   ]
  },
@@ -1768,7 +1784,8 @@
   "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261118~83c5c60158.en.html",
   "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261118~86f1e8147e.en.pdf",
   "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261118a.htm",
-  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261120~e52bcc4db2.en.html"
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261120~e52bcc4db2.en.html",
+  "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261123~76b6f57b74.en.html"
  ],
  "results": [
   [
