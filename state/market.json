@@ -1,18 +1,5 @@
 {
- "open_trades": [
-  {
-   "sym": "XAU/USD",
-   "name": "الذهب",
-   "opened": 1795534239.1051748,
-   "checked": 1795545600,
-   "tp1_hit": true,
-   "side": "SELL",
-   "entry": 3587.0579,
-   "sl": 3602.37057,
-   "tp1": 3571.7452299999995,
-   "tp2": 3556.4325599999997
-  }
- ],
+ "open_trades": [],
  "history": {
   "EUR/USD": [
    [
@@ -442,6 +429,10 @@
    [
     1795545936.2690904,
     1.09689
+   ],
+   [
+    1795546846.426914,
+    1.0966
    ]
   ],
   "GBP/USD": [
@@ -872,6 +863,10 @@
    [
     1795545936.2690904,
     1.31199
+   ],
+   [
+    1795546846.426914,
+    1.31153
    ]
   ],
   "USD/JPY": [
@@ -1302,6 +1297,10 @@
    [
     1795545936.2690904,
     159.29843
+   ],
+   [
+    1795546846.426914,
+    159.28866
    ]
   ],
   "XAU/USD": [
@@ -1732,6 +1731,10 @@
    [
     1795545936.2690904,
     3556.94672
+   ],
+   [
+    1795546846.426914,
+    3555.42914
    ]
   ]
  },
@@ -1784,7 +1787,8 @@
   "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261120~e52bcc4db2.en.html",
   "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261123~76b6f57b74.en.html",
   "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261123~b5816801a0.en.pdf",
-  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261124~17928e5456.en.html"
+  "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261124~17928e5456.en.html",
+  "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261124a.htm"
  ],
  "results": [
   [
@@ -1816,6 +1820,12 @@
    1.0,
    "XAU/USD",
    1795485643
+  ],
+  [
+   "WIN2",
+   1.9999999999999702,
+   "XAU/USD",
+   1795546846
   ]
  ]
 }
