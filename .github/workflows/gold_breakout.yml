@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: '3 7-17 * * 1-5'
   workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'تشغيل تجريبي لإرسال رسالة اختبار للقناة؟'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 jobs:
   run-gold-breakout:
@@ -25,4 +34,5 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GOLD_BREAKOUT_CHAT_ID: ${{ secrets.GOLD_BREAKOUT_CHAT_ID }}
+          TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
         run: python gold_breakout_bot.py
