@@ -76,8 +76,10 @@ def send_telegram_photo(caption, image_path):
     print("Telegram Response:", response.status_code, response.text)
 
 def check_signal():
+    is_test = os.getenv("TEST_MODE", "false").lower() == "true"
     now_utc = datetime.now(timezone.utc)
-    if not (7 <= now_utc.hour <= 17):
+
+    if not is_test and not (7 <= now_utc.hour <= 17):
         print(f"[V2] خارج أوقات التداول ({now_utc.hour}:00 UTC).")
         return
 
@@ -94,7 +96,11 @@ def check_signal():
     entry = current['Open']
     atr = prev['ATR']
 
-    if prev['Close'] > prev['EMA_200'] and prev['Close'] > prev2['High_20'] and prev['ADX'] > 20:
+    if is_test:
+        signal = "BUY"
+        sl = entry - (atr * ATR_SL_MULT)
+        tp = entry + (atr * ATR_TP_MULT)
+    elif prev['Close'] > prev['EMA_200'] and prev['Close'] > prev2['High_20'] and prev['ADX'] > 20:
         signal = "BUY"
         sl = entry - (atr * ATR_SL_MULT)
         tp = entry + (atr * ATR_TP_MULT)
@@ -106,7 +112,9 @@ def check_signal():
     if signal:
         emoji = "🟢" if signal == "BUY" else "🔴"
         direction_ar = "شراء (BUY)" if signal == "BUY" else "بيع (SELL)"
+        test_banner = "🧪 <b>[رسالة تجريبية - TEST]</b>\n" if is_test else ""
         caption = (
+            f"{test_banner}"
             f"<b>{BOT_TAG}</b>\n"
             f"━━━━━━━━━━━━━━━━━━\n"
             f"{emoji} <b>إشارة ذهب جديدة (Donchian Breakout)</b>\n"
@@ -121,9 +129,8 @@ def check_signal():
         chart_file = "gold_breakout_chart.png"
         generate_chart(df, signal, entry, sl, tp, chart_file)
         send_telegram_photo(caption, chart_file)
-        print(f"[V2] تم إرسال إشارة {signal} بنجاح.")
+        print(f"[V2] تم إرسال إشارة {signal} بنجاح (Test={is_test}).")
     else:
         print(f"[V2] [{now_utc.strftime('%Y-%m-%d %H:%M')} UTC] لا توجد إشارة. السعر: {current['Close']:.2f} | ADX: {prev['ADX']:.1f}")
-
 if __name__ == "__main__":
     check_signal()
